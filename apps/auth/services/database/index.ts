@@ -1,14 +1,15 @@
 import { DataSource } from "typeorm";
+import config from "../config";
 import { CredentialEntity } from "./entities/credential.entity";
 import { UserEntity } from "./entities/user.entity";
 
 export const DatabaseConnection = new DataSource({
     type: "postgres",
-    host: "localhost",
-    port: 5432,
-    username: "test",
-    password: "test",
-    database: "test",
+    host: config.database.host,
+    port: config.database.port,
+    username: config.database.user,
+    password: config.database.password,
+    database: config.database.database,
     synchronize: true,
     logging: false,
     entities: [UserEntity, CredentialEntity],
