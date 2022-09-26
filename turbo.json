@@ -3,11 +3,24 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**"]
+      "outputs": ["dist/**"]
     },
     "dev": {
       "dependsOn": ["^dev"],
-      "outputs": [".next/**"]
+      "outputs": ["dist/**"]
+    },
+    "auth#dev": {
+      "dependsOn": ["^dev"],
+      "outputs": ["dist/**"],
+      "env": [
+        "GOOGLE_CALLBACK_URL",
+        "PORT",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET"
+      ]
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
     }
   }
 }

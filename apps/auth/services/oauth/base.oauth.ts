@@ -5,24 +5,24 @@ import { Request } from "express";
 dotenv.config();
 
 export class BaseOauthClient {
-    public client: Client
-    private _scopes: string[] = ['openid']
+    public client: Client;
+    private _scopes: string[] = ["openid"];
 
     get scopes(): string {
-        return this._scopes.join(' ');
+        return this._scopes.join(" ");
     }
 
     constructor(public issuer: Issuer, public callbackUrl: string, clientMetadata: ClientMetadata, scopes?: string[]) {
         this.issuer = issuer;
         this.client = new issuer.Client(clientMetadata);
 
-        if (scopes) 
+        if (scopes)
             this._scopes = scopes;
     }
 
     getRedirectUrl() {
         if (!(this.issuer && this.client)) {
-            throw new Error("Issuer is not working.")
+            throw new Error("Issuer is not working.");
         }
 
         const code_verifier = generators.codeVerifier();
@@ -30,17 +30,17 @@ export class BaseOauthClient {
         const redirectUrl = this.client.authorizationUrl({
             scope: this.scopes,
             code_challenge,
-            code_challenge_method: 'S256',
+            code_challenge_method: "S256",
         });
         return {
             code_verifier,
             redirectUrl
-        }
+        };
     }
 
     async getTokens(req: Request, code_verifier: string) {
         if (!(this.issuer && this.client)) {
-            throw new Error("Issuer is not working.")
+            throw new Error("Issuer is not working.");
         }
 
         const params = this.client.callbackParams(req);
@@ -48,6 +48,6 @@ export class BaseOauthClient {
         return {
             tokens: tokenSet,
             claims: tokenSet.claims()
-        }
+        };
     }
 }

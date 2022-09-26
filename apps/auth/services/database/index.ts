@@ -14,4 +14,4 @@ export const DatabaseConnection = new DataSource({
     entities: [UserEntity, CredentialEntity],
     subscribers: [],
     migrations: [],
-})
+});

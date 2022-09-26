@@ -13,23 +13,23 @@ export class UserEntity implements IUser {
     public username: string;
 
     @Column()
-    email: string;
+        email: string;
 
     @OneToMany(() => CredentialEntity, (credential) => credential.user)
-    public credentials: CredentialEntity[]
+    public credentials: CredentialEntity[];
 
     static fromBody(userMetadata: IUser): UserEntity {
         const newUser = new UserEntity();
-        Object.assign(newUser, userMetadata)
+        Object.assign(newUser, userMetadata);
 
         return newUser;
     }
-    
+
     static async createNewUser(userMetadata: IUser, credentialMetadata: ICredential): Promise<UserEntity> {
         const userRepository = DatabaseConnection.getRepository(UserEntity);
         const user = UserEntity.fromBody(userMetadata);
         const credential = CredentialEntity.fromBody(credentialMetadata);
-        user.credentials = [credential]
+        user.credentials = [credential];
 
         await userRepository.save(user);
         return user;
