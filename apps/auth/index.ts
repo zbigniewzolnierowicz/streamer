@@ -5,9 +5,10 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import { GoogleOauthClient } from "./services/oauth/google.oauth";
 import { DatabaseConnection } from "./services/database";
-import { CredentialEntity, CredentialType } from "./services/database/entities/credential.entity";
+import { CredentialEntity } from "./services/database/entities/credential.entity";
 import { UserEntity } from "./services/database/entities/user.entity";
 import { randomString } from "./utils/random";
+import { CredentialType } from "./types";
 
 dotenv.config();
 
@@ -31,24 +32,30 @@ app.get("/auth/google/callback", async (req: Request, res: Response) => {
   const code_verifier = req.cookies.code_verifier;
   const { claims } = await GoogleClient.getTokens(req, code_verifier);
 
-  const possibleCredential = await credentialRepository.findOne({ where: { credentialType: CredentialType.GOOGLE }, relations: { user: true }});
+  const possibleCredential = await credentialRepository.findOne({ where: { credentialType: CredentialType.GOOGLE }});
 
   if (!possibleCredential) {
-    const user = new UserEntity();
-    user.username = claims.given_name || randomString(10)
-    await userRepository.save(user);
+    if (!claims.email) {
+      throw new Error("No email!");
+    }
 
-    const credential = new CredentialEntity();
-    credential.credentialType = CredentialType.GOOGLE;
-    credential.credentialToken = claims.sub;
-    credential.user = user;
+    const possibleUser = await userRepository.findOne({ where: { email: claims.email } })
+    if (possibleUser) {
+      throw new Error("User already exists with another credential type!")
+    }
 
-    await credentialRepository.save(credential);
+    const user = await UserEntity.createNewUser({
+      username: claims.given_name || randomString(10),
+      email: claims.email
+    }, {
+      credentialType: CredentialType.GOOGLE,
+      credentialToken: claims.sub
+    });
 
-    return res.json(credential);
+    return res.json(user);
   }
 
-  return res.json(possibleCredential);
+  return res.json(possibleCredential.user);
 })
 
 DatabaseConnection.initialize();

@@ -1,15 +1,10 @@
 import { Column, Entity, Index, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { CredentialType, ICredential } from "../../../types";
 import { UserEntity } from "./user.entity";
-
-export enum CredentialType {
-    PASSWORD,
-    GOOGLE,
-    GITHUB
-}
 
 @Entity()
 @Index(["user", "credentialType"], { unique: true })
-export class CredentialEntity {
+export class CredentialEntity implements ICredential {
     @PrimaryGeneratedColumn("uuid")
     public id: string;
 
@@ -23,6 +18,13 @@ export class CredentialEntity {
     @Column()
     public credentialToken: string;
 
-    @ManyToOne(() => UserEntity, (user) => user.credentials)
+    @ManyToOne(() => UserEntity, (user) => user.credentials, { eager: true })
     public user: UserEntity;
+
+    static fromBody(metadata: ICredential): CredentialEntity {
+        const newCredential = new CredentialEntity();
+        Object.assign(newCredential, metadata);
+
+        return newCredential;
+    }
 }

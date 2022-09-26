@@ -20,6 +20,6 @@ export class GoogleOauthClient extends BaseOauthClient {
             redirect_uris: [callbackUrl]
         }
 
-        super(googleIssuer, callbackUrl, clientMetadata);
+        super(googleIssuer, callbackUrl, clientMetadata, ['openid', 'profile', 'email']);
     }
 }

@@ -12,9 +12,12 @@ export class BaseOauthClient {
         return this._scopes.join(' ');
     }
 
-    constructor(public issuer: Issuer, public callbackUrl: string, clientMetadata: ClientMetadata) {
+    constructor(public issuer: Issuer, public callbackUrl: string, clientMetadata: ClientMetadata, scopes?: string[]) {
         this.issuer = issuer;
         this.client = new issuer.Client(clientMetadata);
+
+        if (scopes) 
+            this._scopes = scopes;
     }
 
     getRedirectUrl() {
