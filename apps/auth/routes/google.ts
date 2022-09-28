@@ -45,7 +45,7 @@ router.get("/callback", async (req: Request, res: Response) => {
 
     const newUser = await UserEntity.createNewUser({
       username: claims.given_name || randomString(10),
-      email: claims.email
+      email: claims.email,
     }, {
       credentialType: CredentialType.GOOGLE,
       credentialToken: claims.sub

@@ -5,6 +5,11 @@ import { ICredential } from "../../../types";
 import { createJWT } from "../../../utils/jwt";
 import { CredentialEntity } from "./credential.entity";
 
+interface IUserCreateDTO {
+  username: string
+  email: string
+}
+
 @Entity()
 export class UserEntity implements IUser {
   @PrimaryGeneratedColumn("uuid")
@@ -19,7 +24,7 @@ export class UserEntity implements IUser {
   @OneToMany(() => CredentialEntity, (credential) => credential.user)
   public credentials: CredentialEntity[];
 
-  static fromBody(userMetadata: IUser): UserEntity {
+  static fromBody(userMetadata: IUserCreateDTO): UserEntity {
     const newUser = new UserEntity();
     Object.assign(newUser, userMetadata);
 
@@ -27,7 +32,7 @@ export class UserEntity implements IUser {
   }
 
   static async createNewUser(
-    userMetadata: IUser,
+    userMetadata: IUserCreateDTO,
     credentialMetadata: ICredential
   ): Promise<UserEntity> {
     const userRepository = DatabaseConnection.getRepository(UserEntity);
@@ -47,6 +52,6 @@ export class UserEntity implements IUser {
   }
 
   getToken(): string {
-    return createJWT(this.getPublic());
+    return createJWT({ ...this.getPublic(), sub: this.id });
   }
 }
