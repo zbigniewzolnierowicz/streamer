@@ -4,15 +4,15 @@ import { CredentialEntity } from "./entities/credential.entity";
 import { UserEntity } from "./entities/user.entity";
 
 export const DatabaseConnection = new DataSource({
-    type: "postgres",
-    host: config.database.host,
-    port: config.database.port,
-    username: config.database.user,
-    password: config.database.password,
-    database: config.database.database,
-    synchronize: true,
-    logging: false,
-    entities: [UserEntity, CredentialEntity],
-    subscribers: [],
-    migrations: [],
+  type: "postgres",
+  host: config.database.host,
+  port: config.database.port,
+  username: config.database.user,
+  password: config.database.password,
+  database: config.database.database,
+  synchronize: true,
+  logging: false,
+  entities: [UserEntity, CredentialEntity],
+  subscribers: [],
+  migrations: [],
 });

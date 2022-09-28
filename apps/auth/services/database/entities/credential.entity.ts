@@ -6,12 +6,12 @@ import { UserEntity } from "./user.entity";
 @Index(["user", "credentialType"], { unique: true })
 export class CredentialEntity implements ICredential {
     @PrimaryGeneratedColumn("uuid")
-    public id: string;
+  public id: string;
 
     @Column({
-        type: "enum",
-        enum: CredentialType,
-        default: CredentialType.PASSWORD
+      type: "enum",
+      enum: CredentialType,
+      default: CredentialType.PASSWORD
     })
     public credentialType: CredentialType;
 
@@ -22,9 +22,9 @@ export class CredentialEntity implements ICredential {
     public user: UserEntity;
 
     static fromBody(metadata: ICredential): CredentialEntity {
-        const newCredential = new CredentialEntity();
-        Object.assign(newCredential, metadata);
+      const newCredential = new CredentialEntity();
+      Object.assign(newCredential, metadata);
 
-        return newCredential;
+      return newCredential;
     }
 }

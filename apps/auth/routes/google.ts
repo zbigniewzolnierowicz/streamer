@@ -11,53 +11,53 @@ const router = Router();
 
 
 router.get("/", async (req: Request, res: Response) => {
-    const GoogleClient: BaseOauthClient = new GoogleOauthClient();
-    const { code_verifier, redirectUrl } = GoogleClient.getRedirectUrl();
+  const GoogleClient: BaseOauthClient = new GoogleOauthClient();
+  const { code_verifier, redirectUrl } = GoogleClient.getRedirectUrl();
 
-    res.cookie("code_verifier", code_verifier, { httpOnly: true, maxAge: 5 * 60 * 1000 });
-    res.redirect(redirectUrl);
+  res.cookie("code_verifier", code_verifier, { httpOnly: true, maxAge: 5 * 60 * 1000 });
+  res.redirect(redirectUrl);
 });
 
 router.get("/callback", async (req: Request, res: Response) => {
-    const GoogleClient: BaseOauthClient = new GoogleOauthClient();
-    const credentialRepository = DatabaseConnection.getRepository(CredentialEntity);
-    const userRepository = DatabaseConnection.getRepository(UserEntity);
+  const GoogleClient: BaseOauthClient = new GoogleOauthClient();
+  const credentialRepository = DatabaseConnection.getRepository(CredentialEntity);
+  const userRepository = DatabaseConnection.getRepository(UserEntity);
 
-    const code_verifier = req.cookies.code_verifier;
+  const code_verifier = req.cookies.code_verifier;
 
-    if (!code_verifier) {
-        throw new Error("No code verifier cookie!");
+  if (!code_verifier) {
+    throw new Error("No code verifier cookie!");
+  }
+
+  const { claims } = await GoogleClient.getTokens(req, code_verifier);
+
+  const possibleCredential = await credentialRepository.findOne({ where: { credentialType: CredentialType.GOOGLE }});
+  let user: UserEntity;
+
+  if (!possibleCredential) {
+    if (!claims.email) {
+      throw new Error("No email!");
     }
 
-    const { claims } = await GoogleClient.getTokens(req, code_verifier);
-
-    const possibleCredential = await credentialRepository.findOne({ where: { credentialType: CredentialType.GOOGLE }});
-    let user: UserEntity;
-
-    if (!possibleCredential) {
-        if (!claims.email) {
-            throw new Error("No email!");
-        }
-
-        const possibleUser = await userRepository.findOne({ where: { email: claims.email } });
-        if (possibleUser) {
-            throw new Error("User already exists with another credential type!");
-        }
-
-        const newUser = await UserEntity.createNewUser({
-            username: claims.given_name || randomString(10),
-            email: claims.email
-        }, {
-            credentialType: CredentialType.GOOGLE,
-            credentialToken: claims.sub
-        });
-
-        user = newUser;
-    } else {
-        user = possibleCredential.user;
+    const possibleUser = await userRepository.findOne({ where: { email: claims.email } });
+    if (possibleUser) {
+      throw new Error("User already exists with another credential type!");
     }
 
-    return res.json(user);
+    const newUser = await UserEntity.createNewUser({
+      username: claims.given_name || randomString(10),
+      email: claims.email
+    }, {
+      credentialType: CredentialType.GOOGLE,
+      credentialToken: claims.sub
+    });
+
+    user = newUser;
+  } else {
+    user = possibleCredential.user;
+  }
+
+  return res.json(user);
 });
 
 export { router };
