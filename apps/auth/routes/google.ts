@@ -9,17 +9,16 @@ import { randomString } from "../utils/random";
 
 const router = Router();
 
-
-router.get("/", async (req: Request, res: Response) => {
-  const GoogleClient: BaseOauthClient = new GoogleOauthClient();
-  const { code_verifier, redirectUrl } = GoogleClient.getRedirectUrl();
+router.get("/", async (_req: Request, res: Response) => {
+  const OauthClient: BaseOauthClient = new GoogleOauthClient();
+  const { code_verifier, redirectUrl } = OauthClient.getRedirectUrl();
 
   res.cookie("code_verifier", code_verifier, { httpOnly: true, maxAge: 5 * 60 * 1000 });
   res.redirect(redirectUrl);
 });
 
 router.get("/callback", async (req: Request, res: Response) => {
-  const GoogleClient: BaseOauthClient = new GoogleOauthClient();
+  const OauthClient: BaseOauthClient = new GoogleOauthClient();
   const credentialRepository = DatabaseConnection.getRepository(CredentialEntity);
   const userRepository = DatabaseConnection.getRepository(UserEntity);
 
@@ -29,7 +28,7 @@ router.get("/callback", async (req: Request, res: Response) => {
     throw new Error("No code verifier cookie!");
   }
 
-  const { claims } = await GoogleClient.getTokens(req, code_verifier);
+  const { claims } = await OauthClient.getTokens(req, code_verifier);
 
   const possibleCredential = await credentialRepository.findOne({ where: { credentialType: CredentialType.GOOGLE }});
   let user: UserEntity;
@@ -57,7 +56,9 @@ router.get("/callback", async (req: Request, res: Response) => {
     user = possibleCredential.user;
   }
 
-  return res.json(user);
+  return res.json({
+    access_token: user.getToken()
+  });
 });
 
 export { router };

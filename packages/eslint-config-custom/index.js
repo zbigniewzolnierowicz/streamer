@@ -20,6 +20,7 @@ var config = {
     quotes: ["error", "double"],
     semi: ["error", "always"],
     "no-trailing-spaces": "error",
+    "no-unused-vars": ["error", { "varsIgnorePattern": "^_.*" }]
   },
 };
 
