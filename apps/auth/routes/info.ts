@@ -6,7 +6,7 @@ import { decodeJWT } from "../utils/jwt";
 const router = Router();
 
 router.get("/", async (req, res) => {
-  const authHeader: string | undefined = req.headers.authorization;
+  const authHeader = req.headers.authorization;
   const userRepository = DatabaseConnection.getRepository(UserEntity);
 
   if (!authHeader) {
@@ -14,10 +14,11 @@ router.get("/", async (req, res) => {
   }
 
   const token = authHeader.split("Bearer ")[1];
-  const claims = decodeJWT(token) as { sub: string };
+  const claims = decodeJWT(token);
 
   const possibleUser = await userRepository.findOne({ where: { id: claims.sub } });
   if (!possibleUser) {
+    // TODO: Add proper error messages
     return res.json({ message: "No user found lul" });
   }
 

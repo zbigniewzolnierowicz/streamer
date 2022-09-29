@@ -40,6 +40,7 @@ router.get("/callback", async (req: Request, res: Response) => {
 
     const possibleUser = await userRepository.findOne({ where: { email: claims.email } });
     if (possibleUser) {
+      // TODO: Implement the logic for adding credentials to an existing user
       throw new Error("User already exists with another credential type!");
     }
 
