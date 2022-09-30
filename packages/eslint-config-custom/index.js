@@ -20,7 +20,8 @@ var config = {
     quotes: ["error", "double"],
     semi: ["error", "always"],
     "no-trailing-spaces": "error",
-    "no-unused-vars": ["error", { "varsIgnorePattern": "^_.*" }]
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": ["error", { "varsIgnorePattern": "^_.*" }]
   },
 };
 

@@ -6,7 +6,9 @@ import cookieParser from "cookie-parser";
 import { DatabaseConnection } from "./services/database";
 import { router as googleRoutes } from "./routes/google";
 import { router as userInfoRoutes } from "./routes/info";
+import { router as registerRoutes } from "./routes/register";
 import { DataSource } from "typeorm";
+import bodyParser from "body-parser";
 
 dotenv.config();
 
@@ -17,8 +19,10 @@ function bootstrap(db: DataSource) {
 
   const app = express();
   app.use(cookieParser());
+  app.use(bodyParser.json());
   app.use("/auth", userInfoRoutes);
   app.use("/auth/google", googleRoutes);
+  app.use("/auth/register", registerRoutes);
 
   app.get("/", (_req, res) => {
     return res.send(`
