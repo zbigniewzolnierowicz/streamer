@@ -1,4 +1,5 @@
 import { ClientMetadata, Issuer } from "openid-client";
+import { CredentialType } from "../../types";
 import { BaseOauthClient } from "./base.oauth";
 
 export class GoogleOauthClient extends BaseOauthClient {
@@ -20,6 +21,6 @@ export class GoogleOauthClient extends BaseOauthClient {
       redirect_uris: [callbackUrl]
     };
 
-    super(googleIssuer, callbackUrl, clientMetadata, ["openid", "profile", "email"]);
+    super(googleIssuer, callbackUrl, CredentialType.GOOGLE, clientMetadata, ["openid", "profile", "email"]);
   }
 }
