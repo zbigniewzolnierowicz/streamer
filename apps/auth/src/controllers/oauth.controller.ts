@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { DataSource } from "typeorm";
 import { CredentialEntity } from "../services/database/entities/credential.entity";
 import { UserEntity } from "../services/database/entities/user.entity";
-import { BaseOauthClient } from "../services/oauth/base.oauth";
+import { BaseOauthClient } from "../services/auth/base-oauth.auth";
 import { randomString } from "../utils/random";
 
 export class OauthController {

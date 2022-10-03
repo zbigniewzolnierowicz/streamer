@@ -18,7 +18,7 @@ export class CredentialEntity implements ICredential {
     @Column()
     public credentialToken: string;
 
-    @ManyToOne(() => UserEntity, (user) => user.credentials, { eager: true })
+    @ManyToOne(() => UserEntity, (user) => user.credentials)
     public user: UserEntity;
 
     static fromBody(metadata: ICredential): CredentialEntity {

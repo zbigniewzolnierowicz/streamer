@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { BaseOauthClient } from "../services/oauth/base.oauth";
-import { GoogleOauthClient } from "../services/oauth/google.oauth";
+import { BaseOauthClient } from "../services/auth/base-oauth.auth";
+import { GoogleOauthClient } from "../services/auth/google.auth";
 import { OauthController } from "../controllers/oauth.controller";
 import { DatabaseConnection } from "../services/database";
 

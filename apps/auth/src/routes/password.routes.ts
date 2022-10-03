@@ -3,9 +3,10 @@ import { DatabaseConnection } from "../services/database";
 import { PasswordController } from "../controllers/password.controller";
 
 const router = Router();
-const registerController = new PasswordController(DatabaseConnection);
+const passwordController = new PasswordController(DatabaseConnection);
 
-router.post("/", registerController.register);
+router.post("/register", passwordController.register);
+router.post("/login", passwordController.login);
 
 export {
   router

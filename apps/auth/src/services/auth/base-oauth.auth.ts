@@ -7,7 +7,7 @@ dotenv.config();
 
 export class BaseOauthClient {
   public client: Client;
-  private _scopes: string[] = ["openid"];
+  private _scopes: string[] = ["openid", "profile", "email"];
 
   get scopes(): string {
     return this._scopes.join(" ");

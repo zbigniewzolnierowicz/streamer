@@ -30,7 +30,7 @@ const config = {
     oauth: {
       basePath: oauthBaseUrl,
       google: {
-        callbackUrl: process.env.GOOGLE_CALLBACK_URL || service.base + oauthBaseUrl + "/google",
+        callbackUrl: process.env.GOOGLE_CALLBACK_URL || service.base + oauthBaseUrl + "/google/callback",
         clientId: process.env.GOOGLE_CLIENT_ID || "",
         clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
       }

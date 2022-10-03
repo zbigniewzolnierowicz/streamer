@@ -21,7 +21,7 @@ export class UserEntity implements IUser {
   @Column()
   public email: string;
 
-  @OneToMany(() => CredentialEntity, (credential) => credential.user)
+  @OneToMany(() => CredentialEntity, (credential) => credential.user, { cascade: true })
   public credentials: CredentialEntity[];
 
   static fromBody(userMetadata: IUserCreate): UserEntity {

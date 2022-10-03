@@ -6,9 +6,9 @@ export interface IUserLocals {
 }
 
 export enum CredentialType {
-  PASSWORD,
-  GOOGLE,
-  GITHUB
+  PASSWORD = "password",
+  GOOGLE = "google",
+  GITHUB = "github"
 }
 
 export interface ICredential {
