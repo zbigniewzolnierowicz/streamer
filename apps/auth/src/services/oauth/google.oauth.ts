@@ -1,5 +1,6 @@
 import { ClientMetadata, Issuer } from "openid-client";
 import { CredentialType } from "../../types";
+import config from "../config";
 import { BaseOauthClient } from "./base.oauth";
 
 export class GoogleOauthClient extends BaseOauthClient {
@@ -13,10 +14,10 @@ export class GoogleOauthClient extends BaseOauthClient {
       token_endpoint_auth_methods_supported: ["client_secret_post", "client_secret_basic"],
       jwks_uri: "https://www.googleapis.com/oauth2/v3/certs"
     });
-    const callbackUrl = process.env.GOOGLE_CALLBACK_URL || `http://localhost:${process.env.PORT || 8080}/auth/google/callback`;
+    const callbackUrl = config.auth.oauth.google.callbackUrl;
     const clientMetadata: ClientMetadata = {
-      client_id: process.env.GOOGLE_CLIENT_ID || "",
-      client_secret: process.env.GOOGLE_CLIENT_SECRET || "",
+      client_id: config.auth.oauth.google.clientId,
+      client_secret: config.auth.oauth.google.clientSecret,
       response_types: ["code"],
       redirect_uris: [callbackUrl]
     };

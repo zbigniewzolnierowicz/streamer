@@ -3,12 +3,13 @@ import "reflect-metadata";
 import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-import { DatabaseConnection } from "./services/database";
-import { router as userInfoRoutes } from "./routes/info.routes";
-import { router as registerRoutes } from "./routes/register.routes";
 import { DataSource } from "typeorm";
 import bodyParser from "body-parser";
+import { DatabaseConnection } from "./services/database";
+import { router as userInfoRoutes } from "./routes/info.routes";
+import { router as passwordRoutes } from "./routes/password.routes";
 import { router as oauthRoutes } from "./routes/oauth.routes";
+import config from "./services/config";
 
 dotenv.config();
 
@@ -22,8 +23,8 @@ async function bootstrap(db: DataSource) {
   app.use(cookieParser());
   app.use(bodyParser.json());
   app.use("/info", userInfoRoutes);
-  app.use("/register", registerRoutes);
-  app.use("/auth", oauthRoutes);
+  app.use(config.auth.password.basePath, passwordRoutes);
+  app.use(config.auth.oauth.basePath, oauthRoutes);
 
   // TODO: Add password reminding mechanism
   // TODO: Add logout with token invalidation

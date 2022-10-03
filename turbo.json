@@ -22,7 +22,8 @@
         "POSTGRES_USER",
         "POSTGRES_PASSWORD",
         "POSTGRES_DB",
-        "JWT_SECRET"
+        "JWT_SECRET",
+        "BASE_URL"
       ]
     },
     "lint": {
