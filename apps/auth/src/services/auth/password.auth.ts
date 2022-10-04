@@ -76,6 +76,10 @@ export class PasswordAuthService {
       credentialToken: await argon2.hash(newUserDTO.password)
     });
 
+    /*
+      TODO: Add email sending logic
+      Utilize event sending to a separate microservice
+    */
     const confirmationEmail = new EmailConfirmationEntity();
     confirmationEmail.user = user;
     confirmationEmail.token = randomString(128);
@@ -90,6 +94,7 @@ export class PasswordAuthService {
   async confirmUser(token: string) {
     const confirmEmailRepository = this.db.getRepository(EmailConfirmationEntity);
     const userRepository = this.db.getRepository(UserEntity);
+    const currentDate = new Date();
 
     const possibleToken = await confirmEmailRepository.findOne({ where: { token }, relations: { user: true } });
 
@@ -98,6 +103,17 @@ export class PasswordAuthService {
     }
 
     const user = possibleToken.user;
+
+    if (user.active) {
+      await confirmEmailRepository.delete({ id: possibleToken.id });
+      throw new Error("User is already activated.");
+    }
+
+    if (currentDate > possibleToken.validUntil) {
+      // TODO: Add function handling for outdated email validation requests
+      throw new Error("The token is outdated. Please send a new one.");
+    }
+
     user.active = true;
 
     const savedUser = await userRepository.save(user);
