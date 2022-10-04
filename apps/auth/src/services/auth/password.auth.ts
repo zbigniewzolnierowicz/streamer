@@ -5,11 +5,15 @@ import { NewUserPasswordDTO } from "../../dto/newuserpassword.dto";
 import { CredentialType } from "../../types";
 import { UserEntity } from "../database/entities/user.entity";
 import { LogInUserDTO } from "../../dto/loginuser.dto";
+import { EmailConfirmationEntity } from "../database/entities/emailconfirmation.entity";
+import { randomString } from "../../utils/random";
+import { addMinutes } from "date-fns";
 
 export class PasswordAuthService {
   constructor(private db: DataSource) {
     this.register = this.register.bind(this);
     this.login = this.login.bind(this);
+    this.confirmUser = this.confirmUser.bind(this);
   }
 
   async login(loginUserDTO: LogInUserDTO) {
@@ -43,11 +47,16 @@ export class PasswordAuthService {
       throw new Error("Bad password!");
     }
 
+    if (!existingUser.active) {
+      throw new Error("User is not active.");
+    }
+
     return existingUser;
   }
 
   async register(newUserDTO: NewUserPasswordDTO) {
     const userRepository = this.db.getRepository(UserEntity);
+    const confirmEmailRepository = this.db.getRepository(EmailConfirmationEntity);
 
     const errors = await validate(newUserDTO);
     if (errors.length > 0) {
@@ -67,6 +76,33 @@ export class PasswordAuthService {
       credentialToken: await argon2.hash(newUserDTO.password)
     });
 
-    return user;
+    const confirmationEmail = new EmailConfirmationEntity();
+    confirmationEmail.user = user;
+    confirmationEmail.token = randomString(128);
+    confirmationEmail.issuedAt = new Date();
+    confirmationEmail.validUntil = addMinutes(confirmationEmail.issuedAt, 15);
+
+    const { token } = await confirmEmailRepository.save(confirmationEmail);
+
+    return token;
+  }
+
+  async confirmUser(token: string) {
+    const confirmEmailRepository = this.db.getRepository(EmailConfirmationEntity);
+    const userRepository = this.db.getRepository(UserEntity);
+
+    const possibleToken = await confirmEmailRepository.findOne({ where: { token }, relations: { user: true } });
+
+    if (!possibleToken) {
+      throw new Error("No such token was stored.");
+    }
+
+    const user = possibleToken.user;
+    user.active = true;
+
+    const savedUser = await userRepository.save(user);
+    await confirmEmailRepository.delete({ id: possibleToken.id });
+
+    return savedUser.active;
   }
 }

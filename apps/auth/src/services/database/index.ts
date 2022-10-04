@@ -1,6 +1,7 @@
 import { DataSource } from "typeorm";
 import config from "../config";
 import { CredentialEntity } from "./entities/credential.entity";
+import { EmailConfirmationEntity } from "./entities/emailconfirmation.entity";
 import { UserEntity } from "./entities/user.entity";
 
 export const DatabaseConnection = new DataSource({
@@ -12,7 +13,7 @@ export const DatabaseConnection = new DataSource({
   database: config.database.database,
   synchronize: true,
   logging: false,
-  entities: [UserEntity, CredentialEntity],
+  entities: [UserEntity, CredentialEntity, EmailConfirmationEntity],
   subscribers: [],
   migrations: [],
 });

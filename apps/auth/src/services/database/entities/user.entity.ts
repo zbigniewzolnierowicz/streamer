@@ -24,6 +24,9 @@ export class UserEntity implements IUser {
   @OneToMany(() => CredentialEntity, (credential) => credential.user, { cascade: true })
   public credentials: CredentialEntity[];
 
+  @Column({ default: false })
+  public active: boolean;
+
   static fromBody(userMetadata: IUserCreate): UserEntity {
     const newUser = new UserEntity();
     Object.assign(newUser, userMetadata);

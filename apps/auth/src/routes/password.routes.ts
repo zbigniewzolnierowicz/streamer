@@ -7,6 +7,7 @@ const passwordController = new PasswordController(DatabaseConnection);
 
 router.post("/register", passwordController.register);
 router.post("/login", passwordController.login);
+router.post("/confirm", passwordController.confirm);
 
 export {
   router
