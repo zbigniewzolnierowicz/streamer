@@ -5,10 +5,10 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon --exec node --inspect --experimental-specifier-resolution=node --loader ts-node/esm src/index.ts",
+    "dev": "nodemon --exec node --inspect=127.0.0.1:9230 --experimental-specifier-resolution=node --loader ts-node/esm src/index.ts",
     "build": "tsc",
     "typeorm": "typeorm-ts-node-commonjs",
-    "start": "node --inspect --experimental-specifier-resolution=node dist/index.js",
+    "start": "node --experimental-specifier-resolution=node dist/index.js",
     "lint": "eslint --fix ."
   },
   "keywords": [],
